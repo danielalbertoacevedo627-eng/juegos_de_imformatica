@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quest Cartagena Histórica</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#087e8b,#0f4c5c);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    color:#222;
+}
+
+.card{
+    width:100%;
+    max-width:800px;
+    background:white;
+    border-radius:25px;
+    padding:30px;
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+#inicio{text-align:center;}
+
+.logo{
+    font-size:75px;
+}
+
+h1{
+    color:#0f4c5c;
+    font-size:38px;
+    margin:10px 0;
+}
+
+.subtitulo{
+    color:#555;
+    font-size:18px;
+    line-height:1.5;
+    margin-bottom:25px;
+}
+
+.info{
+    background:#eef8fa;
+    border-radius:15px;
+    padding:18px;
+    margin-bottom:25px;
+    text-align:left;
+}
+
+.info p{
+    margin:9px 0;
+}
+
+.btn{
+    border:none;
+    border-radius:14px;
+    padding:15px 25px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-iniciar{
+    background:#ffb703;
+}
+
+#juego,#resultado{
+    display:none;
+}
+
+.cabecera{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.etiqueta{
+    padding:10px 14px;
+    border-radius:12px;
+    font-weight:bold;
+}
+
+.tiempo{
+    background:#d62828;
+    color:white;
+}
+
+.puntos{
+    background:#ffb703;
+}
+
+.progreso{
+    width:100%;
+    height:10px;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:12px;
+}
+
+.progreso-barra{
+    height:100%;
+    background:#0f4c5c;
+    width:0%;
+    transition:.4s;
+}
+
+.numero{
+    text-align:center;
+    color:#666;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.pregunta{
+    color:#0f4c5c;
+    font-size:25px;
+    font-weight:bold;
+    line-height:1.35;
+    margin-bottom:25px;
+}
+
+.opciones{
+    display:grid;
+    gap:13px;
+}
+
+.opcion{
+    width:100%;
+    text-align:left;
+    background:#f0f8fa;
+    border:2px solid #0f4c5c;
+    padding:15px;
+    border-radius:13px;
+    font-size:17px;
+    cursor:pointer;
+}
+
+.opcion:hover{
+    background:#d9f0f3;
+}
+
+.opcion:disabled{
+    cursor:default;
+}
+
+.correcta{
+    background:#70ad47 !important;
+    color:white !important;
+}
+
+.incorrecta{
+    background:#e63946 !important;
+    color:white !important;
+}
+
+#resultado{
+    text-align:center;
+}
+
+.trofeo{
+    font-size:75px;
+}
+
+#resultado h2{
+    color:#0f4c5c;
+    font-size:34px;
+}
+
+.nota{
+    font-size:55px;
+    color:#ffb703;
+    font-weight:bold;
+    margin:15px;
+}
+
+.estadisticas{
+    background:#f3f3f3;
+    border-radius:16px;
+    padding:20px;
+    text-align:left;
+    margin:20px 0;
+}
+
+.estadisticas p{
+    padding:8px 0;
+    border-bottom:1px solid #ddd;
+}
+
+.mensaje{
+    font-size:18px;
+    font-weight:bold;
+    color:#0f4c5c;
+    margin:20px 0;
+}
+
+.btn-reiniciar{
+    background:#0f4c5c;
+    color:white;
+}
+
+@media(max-width:600px){
+    .card{
+        padding:22px;
+    }
+
+    h1{
+        font-size:30px;
+    }
+
+    .pregunta{
+        font-size:21px;
+    }
+
+    .cabecera{
+        flex-direction:column;
+    }
+
+    .etiqueta{
+        width:100%;
+        text-align:center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<!-- INICIO -->
+<section id="inicio">
+
+    <div class="logo">🏰</div>
+
+    <h1>Quest Cartagena Histórica</h1>
+
+    <p class="subtitulo">
+        ¡Explora la historia de Cartagena y demuestra cuánto sabes!
+    </p>
+
+    <div class="info">
+        <p>⏱️ <strong>Tiempo:</strong> 5 minutos</p>
+        <p>❓ <strong>Preguntas:</strong> 10</p>
+        <p>⭐ <strong>Puntos:</strong> 10 por respuesta correcta</p>
+        <p>🏆 <strong>Objetivo:</strong> conseguir la mayor cantidad de puntos</p>
+    </div>
+
+    <button class="btn btn-iniciar" onclick="iniciarJuego()">
+        🚀 COMENZAR QUEST
+    </button>
+
+</section>
+
+
+<!-- JUEGO -->
+<section id="juego">
+
+    <div class="cabecera">
+
+        <div class="etiqueta tiempo">
+            ⏱️ Tiempo:
+            <span id="tiempo">05:00</span>
+        </div>
+
+        <div class="etiqueta puntos">
+            ⭐ Puntos:
+            <span id="puntos">0</span>
+        </div>
+
+    </div>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="barraProgreso"></div>
+    </div>
+
+    <div class="numero" id="numeroPregunta">
+        Pregunta 1 de 10
+    </div>
+
+    <div class="pregunta" id="pregunta"></div>
+
+    <div class="opciones" id="opciones"></div>
+
+</section>
+
+
+<!-- RESULTADO -->
+<section id="resultado">
+
+    <div class="trofeo">🏆</div>
+
+    <h2>¡Quest terminada!</h2>
+
+    <div class="nota" id="nota">
+        0 / 10
+    </div>
+
+    <div class="estadisticas">
+
+        <p>
+            ⭐ Puntos obtenidos:
+            <strong id="resultadoPuntos">0</strong>
+        </p>
+
+        <p>
+            ✅ Respuestas correctas:
+            <strong id="correctas">0</strong>
+        </p>
+
+        <p>
+            ❌ Respuestas incorrectas:
+            <strong id="incorrectas">0</strong>
+        </p>
+
+        <p>
+            📚 Preguntas respondidas:
+            <strong id="respondidas">0</strong>
+        </p>
+
+        <p>
+            📊 Promedio por pregunta:
+            <strong id="promedio">0 / 10</strong>
+        </p>
+
+        <p>
+            ⏱️ Tiempo utilizado:
+            <strong id="tiempoFinal">00:00</strong>
+        </p>
+
+    </div>
+
+    <div class="mensaje" id="mensajeFinal"></div>
+
+    <button class="btn btn-reiniciar" onclick="reiniciarJuego()">
+        🔄 JUGAR NUEVAMENTE
+    </button>
+
+</section>
+
+</div>
+
+
+<script>
+
+const preguntas = [
+
+{
+    pregunta:"¿Cómo se llama la gran fortaleza construida para defender Cartagena?",
+    opciones:[
+        "Castillo San Felipe de Barajas",
+        "Castillo de Chapultepec",
+        "Castillo de Windsor",
+        "Castillo de San Fernando"
+    ],
+    respuesta:0
+},
+
+{
+    pregunta:"¿Qué famoso monumento se encuentra en la entrada de la Ciudad Amurallada?",
+    opciones:[
+        "Torre del Sol",
+        "Torre del Reloj",
+        "Torre de Bolívar",
+        "Torre Colonial"
+    ],
+    respuesta:1
+},
+
+{
+    pregunta:"¿Cómo se conoce popularmente al centro histórico de Cartagena?",
+    opciones:[
+        "Ciudad Dorada",
+        "Ciudad Colonial",
+        "Ciudad Amurallada",
+        "Ciudad Antigua"
+    ],
+    respuesta:2
+},
+
+{
+    pregunta:"¿Qué construcción rodea gran parte del centro histórico de Cartagena?",
+    opciones:[
+        "La Muralla",
+        "El Acueducto",
+        "El Palacio",
+        "El Puente Colonial"
+    ],
+    respuesta:0
+},
+
+{
+    pregunta:"¿Qué lugar histórico se encuentra en el Cerro de La Popa?",
+    opciones:[
+        "El Castillo San Felipe",
+        "El Convento de Santa Cruz de la Popa",
+        "La Torre del Reloj",
+        "El Palacio de la Inquisición"
+    ],
+    respuesta:1
+},
+
+{
+    pregunta:"¿Cómo se llama la plaza relacionada con la iglesia de San Pedro Claver?",
+    opciones:[
+        "Plaza de Bolívar",
+        "Plaza de la Aduana",
+        "Plaza San Pedro Claver",
+        "Plaza Santo Domingo"
+    ],
+    respuesta:2
+},
+
+{
+    pregunta:"¿Qué personaje está representado en la Plaza de Bolívar?",
+    opciones:[
+        "Simón Bolívar",
+        "Cristóbal Colón",
+        "Antonio Nariño",
+        "Francisco de Paula Santander"
+    ],
+    respuesta:0
+},
+
+{
+    pregunta:"¿Cuál de estos lugares hace parte de las fortificaciones históricas de Cartagena?",
+    opciones:[
+        "La Torre Eiffel",
+        "El Coliseo Romano",
+        "El Castillo San Felipe",
+        "El Palacio de Versalles"
+    ],
+    respuesta:2
+},
+
+{
+    pregunta:"¿Qué elementos defensivos forman parte de las murallas de Cartagena?",
+    opciones:[
+        "Baluartes",
+        "Aeropuertos",
+        "Estaciones de tren",
+        "Torres de televisión"
+    ],
+    respuesta:0
+},
+
+{
+    pregunta:"¿Cuál era una de las principales funciones de las fortificaciones de Cartagena?",
+    opciones:[
+        "Proteger la ciudad de ataques",
+        "Organizar competencias deportivas",
+        "Cultivar alimentos",
+        "Construir carreteras"
+    ],
+    respuesta:0
+}
+];
+
+
+let preguntaActual=0;
+let puntos=0;
+let correctas=0;
+let incorrectas=0;
+let respondidas=0;
+let tiempoRestante=300;
+let temporizador;
+let juegoActivo=false;
+
+
+function iniciarJuego(){
+
+    document.getElementById("inicio").style.display="none";
+    document.getElementById("resultado").style.display="none";
+    document.getElementById("juego").style.display="block";
+
+    preguntaActual=0;
+    puntos=0;
+    correctas=0;
+    incorrectas=0;
+    respondidas=0;
+    tiempoRestante=300;
+    juegoActivo=true;
+
+    document.getElementById("puntos").textContent=0;
+    document.getElementById("tiempo").textContent="05:00";
+
+    mostrarPregunta();
+
+    temporizador=setInterval(actualizarTiempo,1000);
+}
+
+
+function actualizarTiempo(){
+
+    tiempoRestante--;
+
+    let minutos=Math.floor(tiempoRestante/60);
+    let segundos=tiempoRestante%60;
+
+    document.getElementById("tiempo").textContent=
+        String(minutos).padStart(2,"0")+":"+
+        String(segundos).padStart(2,"0");
+
+    if(tiempoRestante<=0){
+        terminarJuego("Se acabó el tiempo ⏰");
+    }
+}
+
+
+function mostrarPregunta(){
+
+    if(!juegoActivo)return;
+
+    if(preguntaActual>=preguntas.length){
+        terminarJuego("Completaste todas las preguntas 🎉");
+        return;
+    }
+
+    const pregunta=preguntas[preguntaActual];
+
+    document.getElementById("numeroPregunta").textContent=
+        "Pregunta "+(preguntaActual+1)+" de "+preguntas.length;
+
+    document.getElementById("pregunta").textContent=
+        pregunta.pregunta;
+
+    let porcentaje=
+        (preguntaActual/preguntas.length)*100;
+
+    document.getElementById("barraProgreso").style.width=
+        porcentaje+"%";
+
+    const contenedor=document.getElementById("opciones");
+
+    contenedor.innerHTML="";
+
+    pregunta.opciones.forEach((opcion,indice)=>{
+
+        const boton=document.createElement("button");
+
+        boton.className="opcion";
+
+        boton.textContent=
+            String.fromCharCode(65+indice)+". "+opcion;
+
+        boton.onclick=()=>responder(indice);
+
+        contenedor.appendChild(boton);
+    });
+}
+
+
+function responder(indice){
+
+    if(!juegoActivo)return;
+
+    const pregunta=preguntas[preguntaActual];
+
+    const botones=document.querySelectorAll(".opcion");
+
+    botones.forEach(boton=>{
+        boton.disabled=true;
+    });
+
+    respondidas++;
+
+    if(indice===pregunta.respuesta){
+
+        puntos+=10;
+        correctas++;
+
+        botones[indice].classList.add("correcta");
+
+    }else{
+
+        incorrectas++;
+
+        botones[indice].classList.add("incorrecta");
+
+        botones[pregunta.respuesta]
+            .classList.add("correcta");
+    }
+
+    document.getElementById("puntos").textContent=puntos;
+
+    setTimeout(()=>{
+
+        preguntaActual++;
+        mostrarPregunta();
+
+    },700);
+}
+
+
+function terminarJuego(motivo){
+
+    if(!juegoActivo)return;
+
+    juegoActivo=false;
+
+    clearInterval(temporizador);
+
+    document.getElementById("juego").style.display="none";
+    document.getElementById("resultado").style.display="block";
+
+    document.getElementById("resultadoPuntos").textContent=puntos;
+    document.getElementById("correctas").textContent=correctas;
+    document.getElementById("incorrectas").textContent=incorrectas;
+    document.getElementById("respondidas").textContent=respondidas;
+
+    let promedio=0;
+
+    if(respondidas>0){
+        promedio=puntos/respondidas;
+    }
+
+    document.getElementById("promedio").textContent=
+        promedio.toFixed(1)+" / 10";
+
+    let nota=
+        (puntos/(preguntas.length*10))*10;
+
+    document.getElementById("nota").textContent=
+        nota.toFixed(1)+" / 10";
+
+    let usado=300-tiempoRestante;
+
+    let minutos=Math.floor(usado/60);
+    let segundos=usado%60;
+
+    document.getElementById("tiempoFinal").textContent=
+        String(minutos).padStart(2,"0")+":"+
+        String(segundos).padStart(2,"0");
+
+    let mensaje="";
+
+    if(nota>=9){
+
+        mensaje=
+        "🌟 ¡Excelente! Tienes muy buenos conocimientos sobre la historia de Cartagena.";
+
+    }else if(nota>=7){
+
+        mensaje=
+        "👏 ¡Muy bien! Conoces bastante sobre los lugares históricos de Cartagena.";
+
+    }else if(nota>=5){
+
+        mensaje=
+        "👍 ¡Buen intento! Todavía puedes aprender más sobre la historia de Cartagena.";
+
+    }else{
+
+        mensaje=
+        "📚 Sigue aprendiendo. ¡Hay muchos lugares históricos de Cartagena por descubrir!";
+
+    }
+
+    document.getElementById("mensajeFinal").textContent=
+        motivo+" — "+mensaje;
+}
+
+
+function reiniciarJuego(){
+
+    clearInterval(temporizador);
+
+    document.getElementById("resultado").style.display="none";
+    document.getElementById("inicio").style.display="block";
+}
+
+</script>
+
+</body>
+</html>
